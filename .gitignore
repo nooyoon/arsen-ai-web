@@ -1,0 +1,8 @@
+# 내부 기획/메타 검토 문서 (비공개)
+output/
+
+# OS / 에디터
+.DS_Store
+*.swp
+.vscode/
+.idea/
