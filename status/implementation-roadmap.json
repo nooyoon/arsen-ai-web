@@ -1,0 +1,28 @@
+{
+  "updated_at": "2026-05-09T11:35:00+09:00",
+  "title": "Arsen AI 운영 준비 로드맵",
+  "external_publish": false,
+  "versions": [
+    {
+      "label": "V1",
+      "name": "신청/관리 MVP",
+      "progress_percent": 78,
+      "status": "운영 준비",
+      "summary": "신청을 받고 일정별 인원 수를 확인하는 기본 운영 흐름을 준비 중입니다."
+    },
+    {
+      "label": "V2",
+      "name": "콘텐츠 실험",
+      "progress_percent": 52,
+      "status": "실험 준비",
+      "summary": "키워드 기반 블로그, 스레드, 카드뉴스 초안과 검토 흐름을 실험합니다."
+    },
+    {
+      "label": "V3",
+      "name": "외부 공개/24시간 운영",
+      "progress_percent": 24,
+      "status": "계획",
+      "summary": "외부 신청, 안정적인 서버 운영, 결제 및 발행 자동화를 단계적으로 연결합니다."
+    }
+  ]
+}
