@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ARSEN AI 수업 대시보드. ChatGPT, Claude, Gemini, VS Code, Homebrew 설치 링크와 수업용 복사 문장을 제공합니다.">
+<meta property="og:title" content="ARSEN AI 수업 대시보드">
+<meta property="og:description" content="수업 전 설치 링크와 복사해서 사용할 실습 문장을 한 곳에서 확인하세요.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://arsen-ai.com/education.html">
+<title>ARSEN AI 수업 대시보드</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0d1017;
+  --surface: #151a24;
+  --surface-2: #1c2330;
+  --line: #2a3444;
+  --text: #f2f5f8;
+  --muted: #9aa6b2;
+  --soft: #ccd5de;
+  --blue: #8aa9ff;
+  --blue-soft: rgba(138,169,255,.13);
+	  --green: #7bd8aa;
+	  --green-soft: rgba(123,216,170,.12);
+	  --gold: #e9c46a;
+	  --gold-soft: rgba(233,196,106,.12);
+	  --red: #ff8d8d;
+	  --red-soft: rgba(255,141,141,.11);
+	  --shadow: 0 18px 52px rgba(0,0,0,.34);
+	}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+a { color: inherit; text-decoration: none; }
+button, a.button {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 10px 14px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+button:hover, a.button:hover { border-color: rgba(138,169,255,.62); }
+.primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #0d1017;
+}
+.ghost { background: transparent; color: var(--soft); }
+.wrap { width: min(1100px, calc(100% - 30px)); margin: 0 auto; padding: 24px 0 54px; }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.mark {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-weight: 900;
+}
+.brand-title { font-weight: 850; letter-spacing: .02em; }
+.brand-sub { color: var(--muted); font-size: .85rem; }
+.top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .85fr);
+  gap: 18px;
+  margin-top: 24px;
+}
+.panel {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.hero-main { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; gap: 26px; }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--blue);
+  text-transform: uppercase;
+  font-weight: 850;
+  letter-spacing: .12em;
+  font-size: .76rem;
+}
+.eyebrow::before { content: ""; width: 24px; height: 1px; background: rgba(138,169,255,.55); }
+h1 {
+  margin-top: 12px;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+}
+.lead {
+  margin-top: 14px;
+  color: var(--soft);
+  max-width: 680px;
+  font-size: 1.02rem;
+}
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.schedule { padding: 20px; }
+.section-label {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .74rem;
+  font-weight: 850;
+}
+.slot-list { display: grid; gap: 10px; margin-top: 14px; }
+.slot {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface-2);
+}
+.slot.required { border-color: rgba(138,169,255,.55); background: linear-gradient(180deg, var(--blue-soft), transparent), var(--surface-2); }
+.slot-no {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,.06);
+  color: var(--muted);
+  font-weight: 900;
+}
+.required .slot-no { background: var(--blue); color: #0d1017; }
+.slot strong { display: block; margin-bottom: 4px; }
+.slot span { color: var(--muted); font-size: .9rem; }
+.tag {
+  display: inline-flex;
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--soft);
+  font-size: .76rem;
+  font-weight: 800;
+}
+.required .tag { border-color: rgba(138,169,255,.5); color: var(--blue); background: var(--blue-soft); }
+.resource-section { margin-top: 18px; padding: 20px; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+  margin-bottom: 14px;
+}
+.section-title { font-size: 1.15rem; font-weight: 850; }
+.section-hint { color: var(--muted); font-size: .9rem; margin-top: 3px; }
+.count {
+  flex: 0 0 auto;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: .78rem;
+}
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 200px;
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+.card-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.card-title { font-weight: 850; font-size: 1rem; overflow-wrap: anywhere; }
+.badge {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  padding: 3px 9px;
+  color: var(--muted);
+  font-size: .74rem;
+  font-weight: 850;
+}
+.badge.official { color: var(--green); border-color: rgba(123,216,170,.42); background: var(--green-soft); }
+.badge.optional { color: var(--gold); border-color: rgba(233,196,106,.42); background: var(--gold-soft); }
+.badge.ready { color: var(--blue); border-color: rgba(138,169,255,.42); background: var(--blue-soft); }
+.desc { color: var(--soft); font-size: .93rem; overflow-wrap: anywhere; }
+.copy {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 8px;
+  background: #10151d;
+  color: #dfe7ef;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-height: 165px;
+  overflow: auto;
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: .82rem;
+}
+	.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+	.actions button, .actions a { flex: 1 1 auto; }
+	.resource-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+	.sync-status {
+	  flex: 0 0 auto;
+	  display: inline-flex;
+	  align-items: center;
+	  min-height: 34px;
+	  border: 1px solid var(--line);
+	  border-radius: 999px;
+	  padding: 5px 10px;
+	  color: var(--muted);
+	  font-size: .78rem;
+	  font-weight: 850;
+	}
+	.sync-status.ok { color: var(--green); border-color: rgba(123,216,170,.42); background: var(--green-soft); }
+	.sync-status.warn { color: var(--gold); border-color: rgba(233,196,106,.42); background: var(--gold-soft); }
+	.sync-status.error { color: var(--red); border-color: rgba(255,141,141,.42); background: var(--red-soft); }
+	.resource-root { display: grid; gap: 18px; }
+	.resource-group { display: grid; gap: 12px; }
+	.resource-group + .resource-group {
+	  padding-top: 16px;
+	  border-top: 1px solid rgba(255,255,255,.08);
+	}
+	.resource-group-head {
+	  display: flex;
+	  justify-content: space-between;
+	  gap: 12px;
+	  align-items: center;
+	}
+	.resource-group-title { font-size: 1rem; font-weight: 850; }
+	.empty-state {
+	  border: 1px dashed var(--line);
+	  border-radius: 10px;
+	  padding: 18px;
+	  color: var(--muted);
+	  text-align: center;
+	}
+	.notice { margin-top: 18px; padding: 18px; color: var(--muted); }
+.footer {
+  margin-top: 34px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: .88rem;
+}
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #0a0d12;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  padding: 11px 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .18s ease, transform .18s ease;
+  max-width: min(560px, calc(100vw - 28px));
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+	@media (max-width: 640px) {
+	  .wrap { width: min(100% - 22px, 1100px); padding-top: 18px; }
+	  .topbar, .section-head, .resource-group-head { flex-direction: column; align-items: stretch; }
+	  .top-actions, .hero-actions, .resource-toolbar { justify-content: flex-start; }
+	  .hero-main { padding: 22px; }
+	  .resource-grid { grid-template-columns: 1fr; }
+	  .actions button, .actions a { flex-basis: 100%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="/">
+      <span class="mark">A</span>
+      <span>
+        <span class="brand-title">ARSEN AI 클래스</span><br>
+        <span class="brand-sub">수업 대시보드</span>
+      </span>
+	    </a>
+	    <div class="top-actions">
+	      <button type="button" class="ghost" onclick="reloadResources(true)">자료 새로고침</button>
+	      <button type="button" class="ghost" onclick="copyPageLink()">공유 링크 복사</button>
+	      <a class="button ghost" href="/">홈으로</a>
+	      <a class="button primary" href="https://apply.arsen-ai.com/frontend/join-full.html">강의 신청</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="panel hero-main">
+        <div>
+          <div class="eyebrow">Class Ready</div>
+          <h1>수업 시작 전,<br>이 페이지만 따라오시면 됩니다.</h1>
+          <p class="lead">
+            설치 링크는 공식 페이지로 연결됩니다. 실습 문장은 복사 버튼을 눌러
+            ChatGPT, Claude, Gemini에 바로 붙여넣어 사용하시면 됩니다.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary" href="#resources">자료 바로 보기</a>
+          <a class="button" target="_blank" rel="noopener noreferrer" href="https://open.kakao.com/o/gm9tRoJh">정보 공유방</a>
+          <a class="button" target="_blank" rel="noopener noreferrer" href="https://open.kakao.com/o/s88zv6pf">1:1 문의</a>
+        </div>
+      </div>
+
+      <aside class="panel schedule">
+        <div class="section-label">일요일 진행 일정</div>
+        <div class="slot-list">
+          <div class="slot required">
+            <div class="slot-no">1</div>
+            <div>
+              <strong>1회차 · 10:00-12:00</strong>
+              <span>AI 전체 개요, 계정과 앱 세팅, 기본 사용법을 함께 맞춥니다.</span><br>
+              <span class="tag">필수 참여</span>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="slot-no">2</div>
+            <div>
+              <strong>2회차 · 13:00-15:00</strong>
+              <span>프롬프트와 업무 예시를 실습하고 개인별 방향을 잡습니다.</span><br>
+              <span class="tag">선택 참여</span>
+            </div>
+          </div>
+          <div class="slot">
+            <div class="slot-no">3</div>
+            <div>
+              <strong>3회차 · 16:00-18:00</strong>
+              <span>각자 업무에 맞는 자동화 방향을 개별 컨설팅합니다.</span><br>
+              <span class="tag">선택 참여</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+	    <section id="resources" class="panel resource-section">
+	      <div class="section-head">
+	        <div>
+	          <div class="section-title">수업 자료</div>
+	          <div id="resourceHint" class="section-hint">기본 자료를 표시하고 있습니다.</div>
+	        </div>
+	        <div class="resource-toolbar">
+	          <span id="resourceStatus" class="sync-status warn">기본 자료</span>
+	        </div>
+	      </div>
+	      <div id="resourceRoot" class="resource-root" aria-live="polite"></div>
+	    </section>
+
+    <div class="panel notice">
+      1회차는 처음 참여하는 분에게 필수입니다. 2회차와 3회차는 같은 날 이어서 듣거나,
+      다음 일요일 타임으로 나누어 들을 수 있습니다.
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>ARSEN AI 수업 대시보드</span>
+    <span>문의는 정보 공유방 또는 1:1 문의를 이용해 주세요.</span>
+  </footer>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+const EDUCATION_API_URL = 'https://dashboard.arsen-ai.com/api/education';
+const SECTION_ORDER = ['설치 링크', '터미널 복붙', '수업 프롬프트'];
+const SECTION_HINTS = {
+  '설치 링크': '공식 다운로드 페이지에서 직접 설치합니다.',
+  '터미널 복붙': 'Mac 터미널 실습이 필요한 분만 진행합니다.',
+  '수업 프롬프트': '수업 중 각자 AI 도구에 붙여넣고 사용할 문장입니다.'
+};
+const STATUS_LABELS = {
+  official: '공식',
+  optional: '선택',
+  ready: '준비됨'
+};
+const fallbackResources = [
+  {
+    section: '설치 링크',
+    title: 'ChatGPT',
+    status: 'official',
+	    description: '수업 전 공식 OpenAI 페이지에서 설치합니다.',
+	    url: 'https://openai.com/chatgpt/download/',
+	    copy_text: '',
+	    visible: true
+  },
+  {
+    section: '설치 링크',
+    title: 'Claude',
+    status: 'official',
+	    description: '가짜 다운로드 사이트를 피하고 공식 Claude 다운로드만 사용합니다.',
+	    url: 'https://claude.com/download',
+	    copy_text: '',
+	    visible: true
+  },
+  {
+    section: '설치 링크',
+    title: 'Gemini',
+    status: 'official',
+	    description: '브라우저에서 Google Gemini를 열어 로그인합니다.',
+	    url: 'https://gemini.google.com/',
+	    copy_text: '',
+	    visible: true
+  },
+  {
+    section: '설치 링크',
+    title: 'Visual Studio Code',
+    status: 'official',
+	    description: '코드 편집이 필요한 실습용 설치 링크입니다.',
+	    url: 'https://code.visualstudio.com/download',
+	    copy_text: '',
+	    visible: true
+  },
+  {
+    section: '터미널 복붙',
+    title: 'Homebrew 설치',
+    status: 'optional',
+	    description: 'Mac에서 개발 도구를 설치할 때 쓰는 기본 패키지 관리자입니다.',
+	    url: 'https://docs.brew.sh/Installation.html',
+	    copy_text: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
+	    visible: true
+  },
+  {
+    section: '수업 프롬프트',
+    title: '업무 자동화 상담 시작',
+    status: 'ready',
+	    description: '내 업무를 AI에게 설명하고 자동화 우선순위를 잡을 때 사용합니다.',
+	    url: '',
+	    copy_text: '내 업무를 자동화하고 싶어. 내가 반복하는 작업은 다음과 같아:\n1.\n2.\n3.\n이 중에서 AI로 가장 먼저 자동화할 만한 일을 우선순위로 정리해줘.',
+	    visible: true
+  }
+];
+
+function toast(message) {
+  const node = document.getElementById('toast');
+  node.textContent = message;
+  node.classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => node.classList.remove('show'), 1800);
+}
+function fallbackCopy(text) {
+  const area = document.createElement('textarea');
+  area.value = text;
+  area.style.position = 'fixed';
+  area.style.left = '-9999px';
+  document.body.appendChild(area);
+  area.select();
+  document.execCommand('copy');
+  document.body.removeChild(area);
+  toast('복사했습니다.');
+}
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => toast('복사했습니다.')).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+function copyFrom(id) {
+  const node = document.getElementById(id);
+  if (node) copyText(node.textContent.trim());
+}
+function copyPageLink() {
+  copyText('https://arsen-ai.com/education.html');
+}
+
+function setResourceStatus(message, tone) {
+  const node = document.getElementById('resourceStatus');
+  if (!node) return;
+  node.textContent = message;
+  node.className = `sync-status ${tone || 'warn'}`;
+}
+
+function setResourceHint(message) {
+  const node = document.getElementById('resourceHint');
+  if (node) node.textContent = message;
+}
+
+function normalizeStatus(status) {
+  return STATUS_LABELS[status] ? status : 'ready';
+}
+
+function resourceGroups(resources) {
+  const groups = new Map();
+  resources.forEach((resource) => {
+    const section = String(resource.section || '기타 자료').trim() || '기타 자료';
+    if (!groups.has(section)) groups.set(section, []);
+    groups.get(section).push(resource);
+  });
+  return Array.from(groups.entries()).sort(([left], [right]) => {
+    const leftIndex = SECTION_ORDER.indexOf(left);
+    const rightIndex = SECTION_ORDER.indexOf(right);
+    if (leftIndex === -1 && rightIndex === -1) return left.localeCompare(right, 'ko');
+    if (leftIndex === -1) return 1;
+    if (rightIndex === -1) return -1;
+    return leftIndex - rightIndex;
+  });
+}
+
+function formatUpdatedAt(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('ko-KR', {
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).format(date);
+}
+
+function appendActionButtons(actions, resource) {
+  const url = String(resource.url || '').trim();
+  const copyValue = String(resource.copy_text || '').trim();
+  if (url) {
+    const link = document.createElement('a');
+    link.className = 'button';
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.textContent = '링크 열기';
+    actions.appendChild(link);
+
+    const copyUrl = document.createElement('button');
+    copyUrl.type = 'button';
+    copyUrl.textContent = '주소 복사';
+    copyUrl.addEventListener('click', () => copyText(url));
+    actions.appendChild(copyUrl);
+  }
+  if (copyValue) {
+    const copyButton = document.createElement('button');
+    copyButton.type = 'button';
+    copyButton.className = 'primary';
+    copyButton.textContent = resource.section === '터미널 복붙' ? '명령 복사' : '내용 복사';
+    copyButton.addEventListener('click', () => copyText(copyValue));
+    actions.appendChild(copyButton);
+  }
+}
+
+function createResourceCard(resource) {
+  const card = document.createElement('article');
+  card.className = 'card';
+
+  const head = document.createElement('div');
+  head.className = 'card-head';
+  const title = document.createElement('div');
+  title.className = 'card-title';
+  title.textContent = String(resource.title || '제목 없음').trim() || '제목 없음';
+  const status = normalizeStatus(resource.status);
+  const badge = document.createElement('span');
+  badge.className = `badge ${status}`;
+  badge.textContent = STATUS_LABELS[status];
+  head.append(title, badge);
+  card.appendChild(head);
+
+  const description = document.createElement('div');
+  description.className = 'desc';
+  description.textContent = String(resource.description || '').trim() || '수업 자료입니다.';
+  card.appendChild(description);
+
+  const copyValue = String(resource.copy_text || '').trim();
+  if (copyValue) {
+    const pre = document.createElement('pre');
+    pre.className = 'copy';
+    pre.textContent = copyValue;
+    card.appendChild(pre);
+  }
+
+  const actions = document.createElement('div');
+  actions.className = 'actions';
+  appendActionButtons(actions, resource);
+  if (actions.children.length) card.appendChild(actions);
+
+  return card;
+}
+
+function renderResources(resources, meta) {
+  const root = document.getElementById('resourceRoot');
+  if (!root) return;
+  root.replaceChildren();
+
+	  const safeResources = Array.isArray(resources)
+	    ? resources.filter((resource) => resource && resource.visible !== false && String(resource.title || '').trim())
+	    : [];
+
+  if (!safeResources.length) {
+    const empty = document.createElement('div');
+    empty.className = 'empty-state';
+    empty.textContent = '표시할 수업 자료가 없습니다. 대시보드 편집 화면에서 자료를 추가해 주세요.';
+    root.appendChild(empty);
+    setResourceHint('표시할 자료가 없습니다.');
+    return;
+  }
+
+  resourceGroups(safeResources).forEach(([section, items]) => {
+    const group = document.createElement('div');
+    group.className = 'resource-group';
+
+    const head = document.createElement('div');
+    head.className = 'resource-group-head';
+    const title = document.createElement('div');
+    title.className = 'resource-group-title';
+    title.textContent = section;
+    const count = document.createElement('div');
+    count.className = 'count';
+    count.textContent = `${items.length}개 자료`;
+    head.append(title, count);
+    group.appendChild(head);
+
+    const hintText = SECTION_HINTS[section];
+    if (hintText) {
+      const hint = document.createElement('div');
+      hint.className = 'section-hint';
+      hint.textContent = hintText;
+      group.appendChild(hint);
+    }
+
+    const grid = document.createElement('div');
+    grid.className = 'resource-grid';
+    items.forEach((resource) => grid.appendChild(createResourceCard(resource)));
+    group.appendChild(grid);
+    root.appendChild(group);
+  });
+
+  if (meta && meta.source === 'api') {
+    const updatedAt = formatUpdatedAt(meta.updatedAt);
+    setResourceHint(updatedAt ? `대시보드에서 ${updatedAt}에 저장된 자료입니다.` : '대시보드에서 저장된 자료입니다.');
+  } else {
+    setResourceHint('대시보드 API가 연결되기 전에도 볼 수 있는 기본 자료입니다.');
+  }
+}
+
+async function reloadResources(manual) {
+  if (manual) setResourceStatus('불러오는 중', 'warn');
+  try {
+    const response = await fetch(`${EDUCATION_API_URL}?t=${Date.now()}`, { cache: 'no-store' });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if (!Array.isArray(payload.resources)) throw new Error('Invalid education payload');
+    renderResources(payload.resources, { source: 'api', updatedAt: payload.updated_at });
+    setResourceStatus('대시보드 연동', 'ok');
+    if (manual) toast('최신 자료를 불러왔습니다.');
+  } catch (error) {
+    renderResources(fallbackResources, { source: 'fallback' });
+    setResourceStatus('기본 자료', manual ? 'error' : 'warn');
+    if (manual) toast('대시보드 자료를 불러오지 못해 기본 자료를 표시합니다.');
+  }
+}
+
+renderResources(fallbackResources, { source: 'fallback' });
+reloadResources(false);
+</script>
+</body>
+</html>
