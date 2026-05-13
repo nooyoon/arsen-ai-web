@@ -1,700 +1,1239 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="ARSEN AI 수업 대시보드. ChatGPT, Claude, Gemini, VS Code, Homebrew 설치 링크와 수업용 복사 문장을 제공합니다.">
-<meta property="og:title" content="ARSEN AI 수업 대시보드">
-<meta property="og:description" content="수업 전 설치 링크와 복사해서 사용할 실습 문장을 한 곳에서 확인하세요.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://arsen-ai.com/education.html">
-<title>ARSEN AI 수업 대시보드</title>
-<link rel="preconnect" href="https://cdn.jsdelivr.net">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
-<style>
-:root {
-  color-scheme: dark;
-  --bg: #0d1017;
-  --surface: #151a24;
-  --surface-2: #1c2330;
-  --line: #2a3444;
-  --text: #f2f5f8;
-  --muted: #9aa6b2;
-  --soft: #ccd5de;
-  --blue: #8aa9ff;
-  --blue-soft: rgba(138,169,255,.13);
-	  --green: #7bd8aa;
-	  --green-soft: rgba(123,216,170,.12);
-	  --gold: #e9c46a;
-	  --gold-soft: rgba(233,196,106,.12);
-	  --red: #ff8d8d;
-	  --red-soft: rgba(255,141,141,.11);
-	  --shadow: 0 18px 52px rgba(0,0,0,.34);
-	}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  line-height: 1.6;
-}
-a { color: inherit; text-decoration: none; }
-button, a.button {
-  min-height: 42px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--surface-2);
-  color: var(--text);
-  padding: 10px 14px;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-button:hover, a.button:hover { border-color: rgba(138,169,255,.62); }
-.primary {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #0d1017;
-}
-.ghost { background: transparent; color: var(--soft); }
-.wrap { width: min(1100px, calc(100% - 30px)); margin: 0 auto; padding: 24px 0 54px; }
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-.brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  display: grid;
-  place-items: center;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  font-weight: 900;
-}
-.brand-title { font-weight: 850; letter-spacing: .02em; }
-.brand-sub { color: var(--muted); font-size: .85rem; }
-.top-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(280px, .85fr);
-  gap: 18px;
-  margin-top: 24px;
-}
-.panel {
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 12px;
-  background: var(--surface);
-  box-shadow: var(--shadow);
-}
-.hero-main { padding: 30px; display: flex; flex-direction: column; justify-content: space-between; gap: 26px; }
-.eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--blue);
-  text-transform: uppercase;
-  font-weight: 850;
-  letter-spacing: .12em;
-  font-size: .76rem;
-}
-.eyebrow::before { content: ""; width: 24px; height: 1px; background: rgba(138,169,255,.55); }
-h1 {
-  margin-top: 12px;
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  line-height: 1.12;
-  letter-spacing: -.02em;
-}
-.lead {
-  margin-top: 14px;
-  color: var(--soft);
-  max-width: 680px;
-  font-size: 1.02rem;
-}
-.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.schedule { padding: 20px; }
-.section-label {
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  font-size: .74rem;
-  font-weight: 850;
-}
-.slot-list { display: grid; gap: 10px; margin-top: 14px; }
-.slot {
-  display: grid;
-  grid-template-columns: 30px 1fr;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: var(--surface-2);
-}
-.slot.required { border-color: rgba(138,169,255,.55); background: linear-gradient(180deg, var(--blue-soft), transparent), var(--surface-2); }
-.slot-no {
-  width: 28px;
-  height: 28px;
-  border-radius: 7px;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,.06);
-  color: var(--muted);
-  font-weight: 900;
-}
-.required .slot-no { background: var(--blue); color: #0d1017; }
-.slot strong { display: block; margin-bottom: 4px; }
-.slot span { color: var(--muted); font-size: .9rem; }
-.tag {
-  display: inline-flex;
-  margin-top: 8px;
-  border: 1px solid rgba(255,255,255,.12);
-  border-radius: 999px;
-  padding: 2px 8px;
-  color: var(--soft);
-  font-size: .76rem;
-  font-weight: 800;
-}
-.required .tag { border-color: rgba(138,169,255,.5); color: var(--blue); background: var(--blue-soft); }
-.resource-section { margin-top: 18px; padding: 20px; }
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  align-items: baseline;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  margin-bottom: 14px;
-}
-.section-title { font-size: 1.15rem; font-weight: 850; }
-.section-hint { color: var(--muted); font-size: .9rem; margin-top: 3px; }
-.count {
-  flex: 0 0 auto;
-  color: var(--muted);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 3px 9px;
-  font-size: .78rem;
-}
-.resource-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 200px;
-  padding: 16px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 10px;
-  background: var(--surface-2);
-}
-.card-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
-.card-title { font-weight: 850; font-size: 1rem; overflow-wrap: anywhere; }
-.badge {
-  flex: 0 0 auto;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  padding: 3px 9px;
-  color: var(--muted);
-  font-size: .74rem;
-  font-weight: 850;
-}
-.badge.official { color: var(--green); border-color: rgba(123,216,170,.42); background: var(--green-soft); }
-.badge.optional { color: var(--gold); border-color: rgba(233,196,106,.42); background: var(--gold-soft); }
-.badge.ready { color: var(--blue); border-color: rgba(138,169,255,.42); background: var(--blue-soft); }
-.desc { color: var(--soft); font-size: .93rem; overflow-wrap: anywhere; }
-.copy {
-  margin: 0;
-  padding: 12px;
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 8px;
-  background: #10151d;
-  color: #dfe7ef;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  max-height: 165px;
-  overflow: auto;
-  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-  font-size: .82rem;
-}
-	.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
-	.actions button, .actions a { flex: 1 1 auto; }
-	.resource-toolbar { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
-	.sync-status {
-	  flex: 0 0 auto;
-	  display: inline-flex;
-	  align-items: center;
-	  min-height: 34px;
-	  border: 1px solid var(--line);
-	  border-radius: 999px;
-	  padding: 5px 10px;
-	  color: var(--muted);
-	  font-size: .78rem;
-	  font-weight: 850;
-	}
-	.sync-status.ok { color: var(--green); border-color: rgba(123,216,170,.42); background: var(--green-soft); }
-	.sync-status.warn { color: var(--gold); border-color: rgba(233,196,106,.42); background: var(--gold-soft); }
-	.sync-status.error { color: var(--red); border-color: rgba(255,141,141,.42); background: var(--red-soft); }
-	.resource-root { display: grid; gap: 18px; }
-	.resource-group { display: grid; gap: 12px; }
-	.resource-group + .resource-group {
-	  padding-top: 16px;
-	  border-top: 1px solid rgba(255,255,255,.08);
-	}
-	.resource-group-head {
-	  display: flex;
-	  justify-content: space-between;
-	  gap: 12px;
-	  align-items: center;
-	}
-	.resource-group-title { font-size: 1rem; font-weight: 850; }
-	.empty-state {
-	  border: 1px dashed var(--line);
-	  border-radius: 10px;
-	  padding: 18px;
-	  color: var(--muted);
-	  text-align: center;
-	}
-	.notice { margin-top: 18px; padding: 18px; color: var(--muted); }
-.footer {
-  margin-top: 34px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255,255,255,.08);
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  color: var(--muted);
-  font-size: .88rem;
-}
-.toast {
-  position: fixed;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  background: #0a0d12;
-  color: var(--text);
-  box-shadow: var(--shadow);
-  padding: 11px 16px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity .18s ease, transform .18s ease;
-  max-width: min(560px, calc(100vw - 28px));
-  text-align: center;
-}
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(-2px); }
-@media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; }
-  .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-	@media (max-width: 640px) {
-	  .wrap { width: min(100% - 22px, 1100px); padding-top: 18px; }
-	  .topbar, .section-head, .resource-group-head { flex-direction: column; align-items: stretch; }
-	  .top-actions, .hero-actions, .resource-toolbar { justify-content: flex-start; }
-	  .hero-main { padding: 22px; }
-	  .resource-grid { grid-template-columns: 1fr; }
-	  .actions button, .actions a { flex-basis: 100%; }
-}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header class="topbar">
-    <a class="brand" href="/">
-      <span class="mark">A</span>
-      <span>
-        <span class="brand-title">ARSEN AI 클래스</span><br>
-        <span class="brand-sub">수업 대시보드</span>
-      </span>
-	    </a>
-	    <div class="top-actions">
-	      <button type="button" class="ghost" onclick="reloadResources(true)">자료 새로고침</button>
-	      <button type="button" class="ghost" onclick="copyPageLink()">공유 링크 복사</button>
-	      <a class="button ghost" href="/">홈으로</a>
-	      <a class="button primary" href="https://apply.arsen-ai.com/frontend/join-full.html">강의 신청</a>
-    </div>
-  </header>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ARSEN AI 수업 대시보드. 설치 링크, 수업 프롬프트, 모델별 기본 설정, 업무 자동화 템플릿을 한 곳에서 확인합니다.">
+  <meta property="og:title" content="ARSEN AI 수업 대시보드">
+  <meta property="og:description" content="수업 전 설치 링크와 복사해서 쓰는 AI 프롬프트 자료를 제공합니다.">
+  <meta property="og:url" content="https://arsen-ai.com/education.html">
+  <link rel="canonical" href="https://arsen-ai.com/education.html">
+  <title>ARSEN AI 클래스 · 수업 대시보드</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1014;
+      --bg-soft: #11151a;
+      --panel: #161b21;
+      --panel-2: #1c222a;
+      --panel-3: #232a33;
+      --line: #2a323c;
+      --line-soft: #1f262e;
+      --text: #f1f4f7;
+      --muted: #97a1ab;
+      --soft: #cdd5dd;
+      --accent: #8aa9ff;
+      --accent-soft: rgba(138,169,255,.12);
+      --accent-line: rgba(138,169,255,.42);
+      --gold: #e7c074;
+      --gold-soft: rgba(231,192,116,.12);
+      --gold-line: rgba(231,192,116,.4);
+      --ok: #7bd28a;
+      --ok-soft: rgba(123,210,138,.1);
+      --ok-line: rgba(123,210,138,.36);
+      --warn: #f0b46a;
+      --warn-soft: rgba(240,180,106,.1);
+      --warn-line: rgba(240,180,106,.36);
+      --danger: #ff8a8a;
+      --shadow: 0 14px 38px rgba(0,0,0,.34);
+    }
+    * { box-sizing: border-box; }
+    html, body { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-feature-settings: "ss01" on, "cv11" on;
+      line-height: 1.55;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button, input, textarea { font: inherit; color: var(--text); }
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      min-height: 38px;
+      border-radius: 8px;
+      padding: 0 14px;
+      cursor: pointer;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      transition: background .12s ease, border-color .12s ease, color .12s ease;
+    }
+    button:hover { background: var(--panel-3); border-color: var(--line); }
+    button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn-primary {
+      background: var(--accent);
+      color: #0c1018;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover { background: #9bb6ff; border-color: #9bb6ff; color: #0c1018; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--soft);
+    }
+    .btn-ghost:hover { color: var(--text); }
 
-  <main>
-    <section class="hero">
-      <div class="panel hero-main">
-        <div>
-          <div class="eyebrow">Class Ready</div>
-          <h1>수업 시작 전,<br>이 페이지만 따라오시면 됩니다.</h1>
-          <p class="lead">
-            설치 링크는 공식 페이지로 연결됩니다. 실습 문장은 복사 버튼을 눌러
-            ChatGPT, Claude, Gemini에 바로 붙여넣어 사용하시면 됩니다.
-          </p>
-        </div>
-        <div class="hero-actions">
-          <a class="button primary" href="#resources">자료 바로 보기</a>
-          <a class="button" target="_blank" rel="noopener noreferrer" href="https://open.kakao.com/o/gm9tRoJh">정보 공유방</a>
-          <a class="button" target="_blank" rel="noopener noreferrer" href="https://open.kakao.com/o/s88zv6pf">1:1 문의</a>
-        </div>
-      </div>
+    /* ===== Layout ===== */
+    .wrap {
+      width: min(1080px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 56px;
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line-soft);
+      margin-bottom: 22px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+    .mark {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: .02em;
+    }
+    .brand-title {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -.01em;
+    }
+    .brand-sub {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+	    }
+	    #editToggle { display: none; }
+	    #openPublicPage { display: none; }
+	    body.operator-mode #openPublicPage { display: inline-flex; }
+	    body.operator-mode #editToggle { display: inline-flex; }
 
-      <aside class="panel schedule">
-        <div class="section-label">일요일 진행 일정</div>
-        <div class="slot-list">
-          <div class="slot required">
-            <div class="slot-no">1</div>
-            <div>
-              <strong>1회차 · 10:00-12:00</strong>
-              <span>AI 전체 개요, 계정과 앱 세팅, 기본 사용법을 함께 맞춥니다.</span><br>
-              <span class="tag">필수 참여</span>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="slot-no">2</div>
-            <div>
-              <strong>2회차 · 13:00-15:00</strong>
-              <span>프롬프트와 업무 예시를 실습하고 개인별 방향을 잡습니다.</span><br>
-              <span class="tag">선택 참여</span>
-            </div>
-          </div>
-          <div class="slot">
-            <div class="slot-no">3</div>
-            <div>
-              <strong>3회차 · 16:00-18:00</strong>
-              <span>각자 업무에 맞는 자동화 방향을 개별 컨설팅합니다.</span><br>
-              <span class="tag">선택 참여</span>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </section>
-
-	    <section id="resources" class="panel resource-section">
-	      <div class="section-head">
-	        <div>
-	          <div class="section-title">수업 자료</div>
-	          <div id="resourceHint" class="section-hint">기본 자료를 표시하고 있습니다.</div>
-	        </div>
-	        <div class="resource-toolbar">
-	          <span id="resourceStatus" class="sync-status warn">기본 자료</span>
-	        </div>
-	      </div>
-	      <div id="resourceRoot" class="resource-root" aria-live="polite"></div>
-	    </section>
-
-    <div class="panel notice">
-      1회차는 처음 참여하는 분에게 필수입니다. 2회차와 3회차는 같은 날 이어서 듣거나,
-      다음 일요일 타임으로 나누어 들을 수 있습니다.
-    </div>
-  </main>
-
-  <footer class="footer">
-    <span>ARSEN AI 수업 대시보드</span>
-    <span>문의는 정보 공유방 또는 1:1 문의를 이용해 주세요.</span>
-  </footer>
-</div>
-
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
-<script>
-const EDUCATION_API_URL = 'https://dashboard.arsen-ai.com/api/education';
-const SECTION_ORDER = ['설치 링크', '터미널 복붙', '수업 프롬프트'];
-const SECTION_HINTS = {
-  '설치 링크': '공식 다운로드 페이지에서 직접 설치합니다.',
-  '터미널 복붙': 'Mac 터미널 실습이 필요한 분만 진행합니다.',
-  '수업 프롬프트': '수업 중 각자 AI 도구에 붙여넣고 사용할 문장입니다.'
-};
-const STATUS_LABELS = {
-  official: '공식',
-  optional: '선택',
-  ready: '준비됨'
-};
-const fallbackResources = [
-  {
-    section: '설치 링크',
-    title: 'ChatGPT',
-    status: 'official',
-	    description: '수업 전 공식 OpenAI 페이지에서 설치합니다.',
-	    url: 'https://openai.com/chatgpt/download/',
-	    copy_text: '',
-	    visible: true
-  },
-  {
-    section: '설치 링크',
-    title: 'Claude',
-    status: 'official',
-	    description: '가짜 다운로드 사이트를 피하고 공식 Claude 다운로드만 사용합니다.',
-	    url: 'https://claude.com/download',
-	    copy_text: '',
-	    visible: true
-  },
-  {
-    section: '설치 링크',
-    title: 'Gemini',
-    status: 'official',
-	    description: '브라우저에서 Google Gemini를 열어 로그인합니다.',
-	    url: 'https://gemini.google.com/',
-	    copy_text: '',
-	    visible: true
-  },
-  {
-    section: '설치 링크',
-    title: 'Visual Studio Code',
-    status: 'official',
-	    description: '코드 편집이 필요한 실습용 설치 링크입니다.',
-	    url: 'https://code.visualstudio.com/download',
-	    copy_text: '',
-	    visible: true
-  },
-  {
-    section: '터미널 복붙',
-    title: 'Homebrew 설치',
-    status: 'optional',
-	    description: 'Mac에서 개발 도구를 설치할 때 쓰는 기본 패키지 관리자입니다.',
-	    url: 'https://docs.brew.sh/Installation.html',
-	    copy_text: '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"',
-	    visible: true
-  },
-  {
-    section: '수업 프롬프트',
-    title: '업무 자동화 상담 시작',
-    status: 'ready',
-	    description: '내 업무를 AI에게 설명하고 자동화 우선순위를 잡을 때 사용합니다.',
-	    url: '',
-	    copy_text: '내 업무를 자동화하고 싶어. 내가 반복하는 작업은 다음과 같아:\n1.\n2.\n3.\n이 중에서 AI로 가장 먼저 자동화할 만한 일을 우선순위로 정리해줘.',
-	    visible: true
-  }
-];
-
-function toast(message) {
-  const node = document.getElementById('toast');
-  node.textContent = message;
-  node.classList.add('show');
-  clearTimeout(toast.timer);
-  toast.timer = setTimeout(() => node.classList.remove('show'), 1800);
-}
-function fallbackCopy(text) {
-  const area = document.createElement('textarea');
-  area.value = text;
-  area.style.position = 'fixed';
-  area.style.left = '-9999px';
-  document.body.appendChild(area);
-  area.select();
-  document.execCommand('copy');
-  document.body.removeChild(area);
-  toast('복사했습니다.');
-}
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(() => toast('복사했습니다.')).catch(() => fallbackCopy(text));
-  } else {
-    fallbackCopy(text);
-  }
-}
-function copyFrom(id) {
-  const node = document.getElementById(id);
-  if (node) copyText(node.textContent.trim());
-}
-function copyPageLink() {
-  copyText('https://arsen-ai.com/education.html');
-}
-
-function setResourceStatus(message, tone) {
-  const node = document.getElementById('resourceStatus');
-  if (!node) return;
-  node.textContent = message;
-  node.className = `sync-status ${tone || 'warn'}`;
-}
-
-function setResourceHint(message) {
-  const node = document.getElementById('resourceHint');
-  if (node) node.textContent = message;
-}
-
-function normalizeStatus(status) {
-  return STATUS_LABELS[status] ? status : 'ready';
-}
-
-function resourceGroups(resources) {
-  const groups = new Map();
-  resources.forEach((resource) => {
-    const section = String(resource.section || '기타 자료').trim() || '기타 자료';
-    if (!groups.has(section)) groups.set(section, []);
-    groups.get(section).push(resource);
-  });
-  return Array.from(groups.entries()).sort(([left], [right]) => {
-    const leftIndex = SECTION_ORDER.indexOf(left);
-    const rightIndex = SECTION_ORDER.indexOf(right);
-    if (leftIndex === -1 && rightIndex === -1) return left.localeCompare(right, 'ko');
-    if (leftIndex === -1) return 1;
-    if (rightIndex === -1) return -1;
-    return leftIndex - rightIndex;
-  });
-}
-
-function formatUpdatedAt(value) {
-  if (!value) return '';
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return '';
-  return new Intl.DateTimeFormat('ko-KR', {
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  }).format(date);
-}
-
-function appendActionButtons(actions, resource) {
-  const url = String(resource.url || '').trim();
-  const copyValue = String(resource.copy_text || '').trim();
-  if (url) {
-    const link = document.createElement('a');
-    link.className = 'button';
-    link.href = url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = '링크 열기';
-    actions.appendChild(link);
-
-    const copyUrl = document.createElement('button');
-    copyUrl.type = 'button';
-    copyUrl.textContent = '주소 복사';
-    copyUrl.addEventListener('click', () => copyText(url));
-    actions.appendChild(copyUrl);
-  }
-  if (copyValue) {
-    const copyButton = document.createElement('button');
-    copyButton.type = 'button';
-    copyButton.className = 'primary';
-    copyButton.textContent = resource.section === '터미널 복붙' ? '명령 복사' : '내용 복사';
-    copyButton.addEventListener('click', () => copyText(copyValue));
-    actions.appendChild(copyButton);
-  }
-}
-
-function createResourceCard(resource) {
-  const card = document.createElement('article');
-  card.className = 'card';
-
-  const head = document.createElement('div');
-  head.className = 'card-head';
-  const title = document.createElement('div');
-  title.className = 'card-title';
-  title.textContent = String(resource.title || '제목 없음').trim() || '제목 없음';
-  const status = normalizeStatus(resource.status);
-  const badge = document.createElement('span');
-  badge.className = `badge ${status}`;
-  badge.textContent = STATUS_LABELS[status];
-  head.append(title, badge);
-  card.appendChild(head);
-
-  const description = document.createElement('div');
-  description.className = 'desc';
-  description.textContent = String(resource.description || '').trim() || '수업 자료입니다.';
-  card.appendChild(description);
-
-  const copyValue = String(resource.copy_text || '').trim();
-  if (copyValue) {
-    const pre = document.createElement('pre');
-    pre.className = 'copy';
-    pre.textContent = copyValue;
-    card.appendChild(pre);
-  }
-
-  const actions = document.createElement('div');
-  actions.className = 'actions';
-  appendActionButtons(actions, resource);
-  if (actions.children.length) card.appendChild(actions);
-
-  return card;
-}
-
-function renderResources(resources, meta) {
-  const root = document.getElementById('resourceRoot');
-  if (!root) return;
-  root.replaceChildren();
-
-	  const safeResources = Array.isArray(resources)
-	    ? resources.filter((resource) => resource && resource.visible !== false && String(resource.title || '').trim())
-	    : [];
-
-  if (!safeResources.length) {
-    const empty = document.createElement('div');
-    empty.className = 'empty-state';
-    empty.textContent = '표시할 수업 자료가 없습니다. 대시보드 편집 화면에서 자료를 추가해 주세요.';
-    root.appendChild(empty);
-    setResourceHint('표시할 자료가 없습니다.');
-    return;
-  }
-
-  resourceGroups(safeResources).forEach(([section, items]) => {
-    const group = document.createElement('div');
-    group.className = 'resource-group';
-
-    const head = document.createElement('div');
-    head.className = 'resource-group-head';
-    const title = document.createElement('div');
-    title.className = 'resource-group-title';
-    title.textContent = section;
-    const count = document.createElement('div');
-    count.className = 'count';
-    count.textContent = `${items.length}개 자료`;
-    head.append(title, count);
-    group.appendChild(head);
-
-    const hintText = SECTION_HINTS[section];
-    if (hintText) {
-      const hint = document.createElement('div');
-      hint.className = 'section-hint';
-      hint.textContent = hintText;
-      group.appendChild(hint);
+    /* ===== Hero ===== */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+    .hero-main {
+      border: 1px solid var(--line-soft);
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: var(--accent-line);
+    }
+    h1 {
+      margin: 12px 0 0;
+      font-size: clamp(26px, 3.8vw, 40px);
+      line-height: 1.18;
+      letter-spacing: -.02em;
+      font-weight: 760;
+    }
+    .lead {
+      margin: 12px 0 0;
+      max-width: 640px;
+      color: var(--soft);
+      font-size: 15.5px;
+      line-height: 1.72;
+    }
+    .steps {
+      display: grid;
+      gap: 10px;
+      margin: 4px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+    .step {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      align-items: start;
+      color: var(--soft);
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    const grid = document.createElement('div');
-    grid.className = 'resource-grid';
-    items.forEach((resource) => grid.appendChild(createResourceCard(resource)));
-    group.appendChild(grid);
-    root.appendChild(group);
-  });
+    /* ===== Schedule ===== */
+    .schedule {
+      border: 1px solid var(--line-soft);
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .panel-label {
+      font-size: 11px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .schedule-list {
+      display: grid;
+      gap: 9px;
+    }
+    .slot {
+      padding: 13px 14px;
+      border: 1px solid var(--line-soft);
+      border-radius: 9px;
+      background: var(--panel-2);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .slot-no {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 auto;
+      border-radius: 7px;
+      background: var(--panel-3);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+    .slot-body strong {
+      display: block;
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 4px;
+    }
+    .slot-body span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .slot-tag {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      letter-spacing: .04em;
+    }
+    .slot.required {
+      border-color: var(--accent-line);
+      background: linear-gradient(180deg, var(--accent-soft), transparent 100%), var(--panel-2);
+    }
+    .slot.required .slot-no {
+      background: var(--accent);
+      color: #0c1018;
+    }
+    .slot.required .slot-tag {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-line);
+    }
+    .slot.optional .slot-tag {
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid var(--gold-line);
+    }
 
-  if (meta && meta.source === 'api') {
-    const updatedAt = formatUpdatedAt(meta.updatedAt);
-    setResourceHint(updatedAt ? `대시보드에서 ${updatedAt}에 저장된 자료입니다.` : '대시보드에서 저장된 자료입니다.');
-  } else {
-    setResourceHint('대시보드 API가 연결되기 전에도 볼 수 있는 기본 자료입니다.');
-  }
-}
+    /* ===== Section ===== */
+    .section {
+      border: 1px solid var(--line-soft);
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 20px 20px 22px;
+      margin-top: 16px;
+      box-shadow: var(--shadow);
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .section-title-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-width: 0;
+    }
+    .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--text);
+    }
+    .section-hint {
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+    .section-count {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .card {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      background: var(--panel-2);
+      padding: 16px;
+      display: flex;
+      min-height: 200px;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.35;
+      letter-spacing: -.01em;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .status {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      color: var(--muted);
+      background: var(--panel-3);
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+	    .status.official { color: var(--ok); border-color: var(--ok-line); background: var(--ok-soft); }
+	    .status.ready { color: var(--accent); border-color: var(--accent-line); background: var(--accent-soft); }
+	    .status.optional { color: var(--warn); border-color: var(--warn-line); background: var(--warn-soft); }
+	    .status.template { color: var(--gold); border-color: var(--gold-line); background: var(--gold-soft); }
+    .desc {
+      color: var(--soft);
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+    .copy-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .copy-label {
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .copy {
+      margin: 0;
+      padding: 12px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: var(--bg-soft);
+      color: #d8dee5;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      max-height: 160px;
+      overflow: auto;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+    .actions button {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .empty, .notice {
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      color: var(--muted);
+      padding: 22px;
+      line-height: 1.65;
+      background: rgba(255,255,255,.02);
+      text-align: center;
+    }
+    .notice {
+      border-style: solid;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      margin-top: 16px;
+    }
 
-async function reloadResources(manual) {
-  if (manual) setResourceStatus('불러오는 중', 'warn');
-  try {
-    const response = await fetch(`${EDUCATION_API_URL}?t=${Date.now()}`, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const payload = await response.json();
-    if (!Array.isArray(payload.resources)) throw new Error('Invalid education payload');
-    renderResources(payload.resources, { source: 'api', updatedAt: payload.updated_at });
-    setResourceStatus('대시보드 연동', 'ok');
-    if (manual) toast('최신 자료를 불러왔습니다.');
-  } catch (error) {
-    renderResources(fallbackResources, { source: 'fallback' });
-    setResourceStatus('기본 자료', manual ? 'error' : 'warn');
-    if (manual) toast('대시보드 자료를 불러오지 못해 기본 자료를 표시합니다.');
-  }
-}
+    /* ===== Editor ===== */
+    .edit-shell {
+      display: none;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 18px;
+      box-shadow: var(--shadow);
+    }
+    body.editing .edit-shell { display: block; }
+    body.editing .student-view { display: none; }
+    .edit-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel-2);
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .edit-banner::before {
+      content: "운영자";
+      flex: 0 0 auto;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--panel-3);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+	    .edit-row {
+	      border: 1px solid var(--line-soft);
+	      border-radius: 9px;
+	      background: var(--panel-2);
+	      padding: 14px;
+	      margin-top: 10px;
+	    }
+	    .edit-row.hidden-resource {
+	      border-color: rgba(255,255,255,.06);
+	      background: rgba(255,255,255,.025);
+	      opacity: .72;
+	    }
+	    .edit-row-head {
+	      display: flex;
+	      justify-content: space-between;
+	      align-items: center;
+	      gap: 10px;
+	      margin-bottom: 10px;
+	    }
+	    .edit-row-title {
+	      min-width: 0;
+	      color: var(--soft);
+	      font-size: 13px;
+	      font-weight: 700;
+	      overflow: hidden;
+	      text-overflow: ellipsis;
+	      white-space: nowrap;
+	    }
+	    .visibility-pill {
+	      flex: 0 0 auto;
+	      border: 1px solid var(--ok-line);
+	      background: var(--ok-soft);
+	      color: var(--ok);
+	      border-radius: 999px;
+	      padding: 3px 9px;
+	      font-size: 11px;
+	      font-weight: 800;
+	      letter-spacing: .03em;
+	    }
+	    .hidden-resource .visibility-pill {
+	      border-color: var(--warn-line);
+	      background: var(--warn-soft);
+	      color: var(--warn);
+	    }
+	    .edit-grid {
+	      display: grid;
+	      grid-template-columns: 1fr 1.2fr .8fr 1.8fr;
+	      gap: 8px;
+	    }
+    .edit-row label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      color: var(--muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+	    input, textarea, select {
+	      width: 100%;
+	      border: 1px solid var(--line);
+	      border-radius: 7px;
+	      background: var(--bg-soft);
+      padding: 9px 11px;
+      outline: none;
+      font-size: 14px;
+    }
+	    textarea {
+      margin-top: 8px;
+      min-height: 84px;
+      resize: vertical;
+      line-height: 1.55;
+      font-family: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 12.5px;
+	    }
+	    input:focus, textarea:focus, select:focus { border-color: var(--accent-line); }
+	    .edit-filter {
+	      min-width: 130px;
+	      width: auto;
+	      min-height: 38px;
+	      color: var(--text);
+	    }
+	    .edit-actions {
+	      display: flex;
+	      gap: 8px;
+	      flex-wrap: wrap;
+	      margin-top: 12px;
+	      justify-content: flex-end;
+	    }
+	    .edit-actions .danger {
+	      color: var(--danger);
+	      border-color: rgba(255,138,138,.34);
+	    }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translateX(-50%);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0a0d12;
+      color: var(--text);
+      padding: 11px 16px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      max-width: min(560px, calc(100vw - 32px));
+      text-align: center;
+      font-size: 14px;
+      z-index: 30;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+    .footer {
+      margin-top: 36px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line-soft);
+      color: var(--muted);
+      font-size: 12.5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      justify-content: space-between;
+    }
+    .sr-only {
+      position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;
+    }
 
-renderResources(fallbackResources, { source: 'fallback' });
-reloadResources(false);
-</script>
+    @media (max-width: 920px) {
+      .hero { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .edit-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 22px, 1080px); padding-top: 18px; }
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .toolbar { justify-content: flex-start; }
+      .hero-main { padding: 22px; }
+      h1 { font-size: clamp(24px, 6.4vw, 32px); }
+      .section { padding: 18px; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      .grid, .edit-grid { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .actions button { flex: 1 1 100%; }
+      .footer { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">A</div>
+        <div>
+          <div class="brand-title">ARSEN AI 클래스</div>
+          <div class="brand-sub">수업 대시보드 · 일요일 진행</div>
+        </div>
+      </div>
+	      <nav class="toolbar" aria-label="페이지 도구">
+		        <button type="button" id="openPublicPage" class="btn-ghost" onclick="openLink(EDUCATION_PUBLIC_URL)" aria-label="온라인 수업 대시보드 열기">공개 페이지 열기</button>
+		        <button type="button" class="btn-ghost" onclick="copyPageLink()" aria-label="이 페이지 주소 복사">이 페이지 주소 복사</button>
+	        <button type="button" class="btn-ghost" onclick="reloadResources()" aria-label="자료 새로고침">새로고침</button>
+	        <button type="button" id="editToggle" onclick="toggleEdit()" aria-label="운영자 편집 모드 전환">운영자 편집</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-label="수업 대시보드 안내">
+        <div class="hero-main">
+          <div>
+            <span class="eyebrow">수강생 안내</span>
+            <h1>수업 시작 전, 이 페이지만<br>따라오시면 준비 끝납니다.</h1>
+            <p class="lead">
+              아래 자료는 강의 진행 순서대로 정리되어 있습니다.
+              설치 링크는 <strong>새 탭</strong>에서 열리고, 실습 문장은 <strong>복사</strong> 버튼을 누르면 바로 사용할 수 있습니다.
+            </p>
+          </div>
+          <ol class="steps" aria-label="진행 순서">
+            <li class="step"><span class="step-num">1</span><span><strong>설치 링크</strong> 섹션의 공식 페이지에서 필요한 앱을 설치합니다.</span></li>
+            <li class="step"><span class="step-num">2</span><span>Mac 터미널 실습이 필요한 경우 <strong>터미널 복붙</strong>의 명령을 그대로 붙여 넣습니다.</span></li>
+            <li class="step"><span class="step-num">3</span><span>수업 중 <strong>실습 프롬프트</strong>를 복사해 각자 도구에 붙여 넣고 진행합니다.</span></li>
+          </ol>
+          <div class="hero-actions">
+            <button type="button" class="btn-primary" onclick="scrollToResources()">자료 바로 보기</button>
+            <button type="button" onclick="openLink('https://open.kakao.com/o/gm9tRoJh')">정보 공유방 열기</button>
+            <button type="button" onclick="openLink('https://open.kakao.com/o/s88zv6pf')">1:1 문의 열기</button>
+          </div>
+        </div>
+        <aside class="schedule" aria-label="일요일 진행 일정">
+          <div class="panel-label">일요일 진행 일정</div>
+          <div class="schedule-list">
+            <div class="slot required">
+              <div class="slot-no" aria-hidden="true">1</div>
+              <div class="slot-body">
+                <strong>1회차 · 10:00 — 12:00</strong>
+                <span>AI 전체 개요, 계정과 앱 세팅, 기본 사용법을 함께 맞춥니다.</span>
+                <span class="slot-tag">필수 참여</span>
+              </div>
+            </div>
+            <div class="slot optional">
+              <div class="slot-no" aria-hidden="true">2</div>
+              <div class="slot-body">
+                <strong>2회차 · 13:00 — 15:00</strong>
+                <span>업무별 자동화 방향을 잡고 개인 상담으로 확장합니다.</span>
+                <span class="slot-tag">선택 참여</span>
+              </div>
+            </div>
+            <div class="slot optional">
+              <div class="slot-no" aria-hidden="true">3</div>
+              <div class="slot-body">
+                <strong>3회차 · 16:00 — 18:00</strong>
+                <span>부족한 세팅을 보완하고 각자 업무 실습을 이어갑니다.</span>
+                <span class="slot-tag">선택 참여</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <div class="student-view">
+        <div id="resourceRoot" class="notice" role="status">교육 자료를 불러오는 중입니다.</div>
+      </div>
+
+	      <section class="edit-shell" aria-label="교육 자료 편집">
+		        <div class="edit-banner" role="note">
+		          이 영역은 운영자만 보입니다. 숨긴 자료는 보관되지만 수강생 공개 페이지에는 표시되지 않습니다.
+		          <strong>변경 저장 후 수강생 화면은 새로고침 시 반영됩니다.</strong>
+		        </div>
+        <div class="section-head">
+	          <div class="section-title-wrap">
+	            <div class="section-title">자료 편집</div>
+	            <span class="section-hint" id="editSummary">필드를 수정하고 저장을 누르면 수강생 화면에 반영됩니다.</span>
+	          </div>
+		          <div class="toolbar" role="group" aria-label="편집 도구">
+		            <select id="editFilter" class="edit-filter" onchange="setEditorFilter(this.value)" aria-label="자료 표시 필터">
+		              <option value="all">전체 보기</option>
+		              <option value="visible">공개만</option>
+		              <option value="hidden">숨김만</option>
+		            </select>
+		            <button type="button" onclick="addEditRow()">자료 추가</button>
+			            <button type="button" onclick="copyText(EDUCATION_PUBLIC_URL)">학생 공개 페이지 주소 복사</button>
+	            <button type="button" class="btn-primary" onclick="saveResources()">변경 저장</button>
+	            <button type="button" class="btn-ghost" onclick="toggleEdit(false)">편집 닫기</button>
+          </div>
+        </div>
+        <div id="editRoot"></div>
+      </section>
+
+      <footer class="footer" role="contentinfo">
+        <span>준비물 확인이 끝나면 강의실에서 만나요.</span>
+        <span>문의는 위 1:1 문의 버튼 또는 정보 공유방을 이용해 주세요.</span>
+      </footer>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+	    var EDUCATION_PUBLIC_URL = 'https://arsen-ai.com/education.html';
+	    var EDUCATION_API_BASE = ['arsen-ai.com', 'www.arsen-ai.com'].indexOf(location.hostname) >= 0
+	      ? 'https://apply.arsen-ai.com'
+	      : '';
+	    var resources = [];
+	    var operatorMode = new URLSearchParams(location.search).has('edit') || location.hash.indexOf('edit') >= 0;
+	    var editing = operatorMode;
+	    var editorFilter = 'all';
+	    var adminKeyPrompted = false;
+	    var SECTION_HINTS = {
+	      '설치 링크': '공식 다운로드 페이지에서 직접 설치합니다. 가짜 사이트 주의.',
+	      '터미널 복붙': 'Mac 터미널을 켜고 복사 버튼으로 명령을 그대로 붙여 넣습니다.',
+	      '수업 프롬프트': '강의 중 각자 AI 도구에 붙여 넣고 사용할 실습 문장입니다.',
+	      '모델별 기본 설정': 'ChatGPT, Claude, Gemini에 미리 넣어두는 기본 지침입니다.',
+	      '업무 자동화 프롬프트': '수강생 업무를 자동화 후보와 실행 계획으로 바꾸는 프롬프트입니다.',
+	      '이미지 생성 프롬프트': '이미지 생성/수정 요청을 모델이 이해하기 쉬운 구조로 바꿉니다.',
+	      '검색/자료조사 프롬프트': '최신 정보와 출처 확인이 필요한 조사에 사용합니다.',
+	      '문서 정리 프롬프트': '문서, 표, 대화 내용을 근거 중심으로 요약합니다.',
+	      '수업 운영 프롬프트': '수강생별 컨설팅과 후속 액션 정리에 사용합니다.'
+	    };
+	    var SECTION_ORDER = ['설치 링크', '터미널 복붙', '수업 프롬프트', '모델별 기본 설정', '업무 자동화 프롬프트', '이미지 생성 프롬프트', '검색/자료조사 프롬프트', '문서 정리 프롬프트', '수업 운영 프롬프트'];
+	    var STATUS_LABELS = {
+	      official: '공식',
+	      ready: '준비됨',
+	      optional: '선택',
+	      template: '템플릿'
+	    };
+	    var fallbackResources = [
+	      {section:'설치 링크', title:'ChatGPT', status:'official', description:'수업 전 공식 OpenAI 페이지에서 설치합니다.', url:'https://openai.com/chatgpt/download/', copy_text:'', visible:true},
+	      {section:'설치 링크', title:'Claude', status:'official', description:'가짜 다운로드 사이트를 피하고 공식 Claude 다운로드만 사용합니다.', url:'https://claude.com/download', copy_text:'', visible:true},
+	      {section:'설치 링크', title:'Gemini', status:'official', description:'브라우저에서 Google Gemini를 열어 로그인합니다.', url:'https://gemini.google.com/', copy_text:'', visible:true},
+	      {section:'설치 링크', title:'Visual Studio Code', status:'official', description:'코드 편집이 필요한 실습용 설치 링크입니다.', url:'https://code.visualstudio.com/download', copy_text:'', visible:true},
+	      {section:'터미널 복붙', title:'Homebrew 설치', status:'optional', description:'Mac 터미널 실습이 필요한 사람만 진행합니다.', url:'https://docs.brew.sh/Installation.html', copy_text:'/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"', visible:true},
+	      {section:'수업 프롬프트', title:'업무 자동화 상담 시작', status:'ready', description:'각자 업무를 AI에게 설명할 때 쓰는 기본 문장입니다.', url:'', copy_text:'내 업무를 자동화하고 싶어. 내가 반복하는 작업은 다음과 같아:\n1. \n2. \n3. \n이 중에서 AI로 가장 먼저 자동화할 만한 일을 우선순위로 정리해줘.', visible:true}
+	    ];
+
+    function el(tag, className, text) {
+      var node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined && text !== null) node.textContent = text;
+      return node;
+    }
+
+    function toast(message, duration) {
+      var node = document.getElementById('toast');
+      node.textContent = message;
+      node.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(function(){ node.classList.remove('show'); }, duration || 2000);
+    }
+
+	    function normalize(items) {
+      if (!Array.isArray(items)) return fallbackResources.slice();
+      return items.filter(function(item){ return item && item.title; }).map(function(item){
+        return {
+          section: (item.section || '기타').toString(),
+          title: (item.title || '').toString(),
+	          status: (item.status || '').toString(),
+	          description: (item.description || '').toString(),
+	          url: (item.url || '').toString(),
+	          copy_text: (item.copy_text || '').toString(),
+	          visible: item.visible !== false,
+	          template_id: (item.template_id || '').toString()
+	        };
+	      });
+	    }
+
+	    function getAdminKey() {
+	      return sessionStorage.getItem('memberAdminKey') || localStorage.getItem('memberAdminKey') || '';
+	    }
+
+	    function ensureAdminKey() {
+	      var key = getAdminKey();
+	      if (!key && operatorMode && !adminKeyPrompted) {
+	        adminKeyPrompted = true;
+	        key = window.prompt('수업 자료 편집을 위해 관리자 비밀번호를 입력해 주세요.') || '';
+	        key = key.trim();
+	        if (key) sessionStorage.setItem('memberAdminKey', key);
+	      }
+	      return key;
+	    }
+
+	    function adminHeaders(extra) {
+	      var headers = Object.assign({}, extra || {});
+	      var key = operatorMode ? ensureAdminKey() : getAdminKey();
+	      if (key) headers['X-Admin-Key'] = key;
+	      return headers;
+	    }
+
+	    function apiUrl(path) {
+	      return EDUCATION_API_BASE + path;
+	    }
+
+	    function reloadResources() {
+	      var url = operatorMode ? '/api/education?include_hidden=1' : '/api/education';
+	      fetch(apiUrl(url), {credentials: 'same-origin', headers: operatorMode ? adminHeaders() : {}})
+        .then(function(res){ if (!res.ok) throw {status: res.status}; return res.json(); })
+        .then(function(data){
+          resources = normalize(data.resources);
+          render();
+        })
+        .catch(function(err){
+          if (err && (err.status === 401 || err.status === 403)) {
+            sessionStorage.removeItem('memberAdminKey');
+            adminKeyPrompted = false;
+          }
+          resources = fallbackResources.slice();
+          render();
+          var status = err && err.status;
+          var msg;
+          if (status === 401 || status === 403) {
+            msg = '편집 API 인증 필요 (' + status + '). 공개 페이지는 정상입니다. 대시보드 로그인 후 다시 열어 주세요.';
+          } else if (status === 404) {
+            msg = '교육 자료 API 경로를 찾을 수 없습니다 (404). 공개 페이지는 정상이며, 서버 설정을 확인해 주세요.';
+          } else if (status === 503 || status === 530) {
+            msg = '서버 일시 오류 (' + status + '). 공개 페이지는 정상이며, 잠시 후 새로고침해 주세요.';
+          } else if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            msg = '네트워크 연결이 끊겨 있습니다. 연결 후 새로고침해 주세요.';
+          } else {
+            msg = '교육 자료를 불러오지 못해 기본 자료를 표시합니다.';
+          }
+          toast(msg, status ? 5000 : 2500);
+        });
+    }
+
+    function render() {
+      document.body.classList.toggle('operator-mode', operatorMode);
+      document.body.classList.toggle('editing', editing);
+      document.getElementById('editToggle').textContent = editing ? '수강생 화면 보기' : '운영자 편집';
+      renderStudent();
+	      renderEditor();
+	    }
+
+		    function visibleResources() {
+		      return resources.filter(function(item){ return item.visible !== false; });
+		    }
+
+	    function filteredEditorResources() {
+	      return resources.map(function(item, idx){ return {item:item, idx:idx}; }).filter(function(entry){
+	        if (editorFilter === 'visible') return entry.item.visible !== false;
+	        if (editorFilter === 'hidden') return entry.item.visible === false;
+	        return true;
+	      });
+	    }
+
+	    function setEditorFilter(value) {
+	      syncEditorRows();
+	      editorFilter = value || 'all';
+	      renderEditor();
+	    }
+
+		    function groupedResources(list) {
+	      var groups = {};
+	      list.forEach(function(item){
+        var key = item.section || '기타';
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(item);
+      });
+      var ordered = {};
+      SECTION_ORDER.forEach(function(name){
+        if (groups[name]) { ordered[name] = groups[name]; delete groups[name]; }
+      });
+      Object.keys(groups).forEach(function(name){ ordered[name] = groups[name]; });
+      return ordered;
+    }
+
+	    function renderStudent() {
+	      var root = document.getElementById('resourceRoot');
+	      root.innerHTML = '';
+	      root.className = '';
+	      var publicResources = visibleResources();
+	      if (!publicResources.length) {
+	        root.className = 'empty';
+	        root.textContent = resources.length ? '현재 공개로 켜둔 교육 자료가 없습니다. 운영자 편집에서 필요한 자료를 공개로 바꿔 주세요.' : '아직 등록된 교육 자료가 없습니다. 운영자가 자료를 추가하면 여기에 표시됩니다.';
+	        return;
+	      }
+	      var groups = groupedResources(publicResources);
+      Object.keys(groups).forEach(function(sectionName){
+        var section = el('section', 'section');
+        var head = el('div', 'section-head');
+        var titleWrap = el('div', 'section-title-wrap');
+        titleWrap.appendChild(el('div', 'section-title', sectionName));
+        if (SECTION_HINTS[sectionName]) {
+          titleWrap.appendChild(el('span', 'section-hint', SECTION_HINTS[sectionName]));
+        }
+        head.appendChild(titleWrap);
+        head.appendChild(el('div', 'section-count', groups[sectionName].length + '개 자료'));
+        section.appendChild(head);
+
+        var grid = el('div', 'grid');
+        groups[sectionName].forEach(function(item){
+          grid.appendChild(resourceCard(item));
+        });
+        section.appendChild(grid);
+        root.appendChild(section);
+      });
+    }
+
+    function statusLabel(raw) {
+      var key = (raw || '').toLowerCase();
+      return STATUS_LABELS[key] || raw || '준비됨';
+    }
+
+    function resourceCard(item) {
+      var card = el('article', 'card');
+      var head = el('div', 'card-head');
+      head.appendChild(el('div', 'card-title', item.title));
+      var statusKey = (item.status || '').toLowerCase();
+      head.appendChild(el('span', 'status ' + statusKey, statusLabel(item.status)));
+      card.appendChild(head);
+      if (item.description) card.appendChild(el('div', 'desc', item.description));
+      if (item.copy_text) {
+        var wrap = el('div', 'copy-wrap');
+        wrap.appendChild(el('div', 'copy-label', '복사할 문장'));
+        wrap.appendChild(el('pre', 'copy', item.copy_text));
+        card.appendChild(wrap);
+      }
+      var actions = el('div', 'actions');
+      if (item.url) {
+        var linkBtn = el('button', '', '링크 열기');
+        linkBtn.type = 'button';
+        linkBtn.setAttribute('aria-label', item.title + ' 공식 페이지 열기');
+        linkBtn.onclick = function(){ openLink(item.url); };
+        actions.appendChild(linkBtn);
+      }
+      if (item.copy_text || item.url) {
+        var copyBtn = el('button', 'btn-primary', item.copy_text ? '문장 복사' : '주소 복사');
+        copyBtn.type = 'button';
+        copyBtn.setAttribute('aria-label', item.title + ' ' + (item.copy_text ? '실습 문장' : '주소') + ' 복사');
+        copyBtn.onclick = function(){ copyText(item.copy_text || item.url); };
+        actions.appendChild(copyBtn);
+      }
+      if (actions.childNodes.length) card.appendChild(actions);
+      return card;
+    }
+
+		    function renderEditor() {
+		      var root = document.getElementById('editRoot');
+		      root.innerHTML = '';
+		      var summary = document.getElementById('editSummary');
+		      var visibleCount = visibleResources().length;
+	      var filtered = filteredEditorResources();
+	      var filterLabel = editorFilter === 'hidden' ? '숨김만' : editorFilter === 'visible' ? '공개만' : '전체';
+		      if (summary) summary.textContent = '공개 ' + visibleCount + '개 · 숨김 ' + (resources.length - visibleCount) + '개 · 현재 ' + filterLabel + ' ' + filtered.length + '개 표시 중입니다.';
+	      var filterNode = document.getElementById('editFilter');
+	      if (filterNode) filterNode.value = editorFilter;
+	      filtered.forEach(function(entry){
+		        root.appendChild(editRow(entry.item, entry.idx));
+		      });
+	      if (!filtered.length) root.appendChild(el('div', 'empty', '현재 필터에 표시할 자료가 없습니다.'));
+		    }
+
+	    function editRow(item, idx) {
+	      var row = el('div', 'edit-row');
+	      if (item.visible === false) row.classList.add('hidden-resource');
+	      row.dataset.index = String(idx);
+	      var rowHead = el('div', 'edit-row-head');
+	      rowHead.appendChild(el('div', 'edit-row-title', (idx + 1) + '. ' + (item.title || '새 자료')));
+	      rowHead.appendChild(el('span', 'visibility-pill', item.visible === false ? '숨김 보관' : '공개 중'));
+	      row.appendChild(rowHead);
+	      var grid = el('div', 'edit-grid');
+      [
+        ['section', '섹션 (예: 설치 링크)', item.section],
+        ['title', '제목', item.title],
+        ['status', '상태 (official / optional / ready)', item.status],
+        ['url', '링크 URL', item.url]
+      ].forEach(function(field){
+        var input = document.createElement('input');
+        input.placeholder = field[1];
+        input.value = field[2] || '';
+        input.dataset.field = field[0];
+        input.setAttribute('aria-label', field[1]);
+        grid.appendChild(input);
+      });
+      row.appendChild(grid);
+      var desc = document.createElement('input');
+      desc.placeholder = '한 줄 설명';
+      desc.value = item.description || '';
+      desc.dataset.field = 'description';
+      desc.style.marginTop = '8px';
+      desc.setAttribute('aria-label', '한 줄 설명');
+      row.appendChild(desc);
+      var copy = document.createElement('textarea');
+      copy.placeholder = '수강생이 복사할 문장이나 명령어 (선택)';
+      copy.value = item.copy_text || '';
+      copy.dataset.field = 'copy_text';
+      copy.setAttribute('aria-label', '복사할 문장 또는 명령어');
+      row.appendChild(copy);
+	      var actions = el('div', 'edit-actions');
+	      var toggle = el('button', 'btn-ghost', item.visible === false ? '공개로 전환' : '숨김 보관');
+	      toggle.type = 'button';
+	      toggle.onclick = function(){
+	        syncEditorRows();
+	        resources[idx].visible = resources[idx].visible === false;
+	        renderEditor();
+	      };
+	      actions.appendChild(toggle);
+	      var duplicate = el('button', 'btn-ghost', '복제');
+	      duplicate.type = 'button';
+		      duplicate.onclick = function(){
+		        syncEditorRows();
+		        var copy = Object.assign({}, resources[idx]);
+	        delete copy.template_id;
+		        copy.title = copy.title ? copy.title + ' 복사본' : '새 자료 복사본';
+		        resources.splice(idx + 1, 0, copy);
+		        renderEditor();
+	      };
+	      actions.appendChild(duplicate);
+	      var up = el('button', 'btn-ghost', '위로');
+	      up.type = 'button';
+	      up.disabled = idx === 0;
+	      up.onclick = function(){
+	        syncEditorRows();
+	        var current = resources.splice(idx, 1)[0];
+	        resources.splice(idx - 1, 0, current);
+	        renderEditor();
+	      };
+	      actions.appendChild(up);
+	      var down = el('button', 'btn-ghost', '아래로');
+	      down.type = 'button';
+	      down.disabled = idx === resources.length - 1;
+	      down.onclick = function(){
+	        syncEditorRows();
+	        var current = resources.splice(idx, 1)[0];
+	        resources.splice(idx + 1, 0, current);
+	        renderEditor();
+	      };
+	      actions.appendChild(down);
+	      var del = el('button', 'btn-ghost danger', '영구 삭제');
+	      del.type = 'button';
+	      del.onclick = function(){
+	        if (!confirm('이 자료를 완전히 삭제할까요? 나중에 쓸 가능성이 있으면 “숨김 보관”을 사용해 주세요.')) return;
+	        syncEditorRows();
+	        resources.splice(idx, 1);
+	        renderEditor();
+	      };
+      actions.appendChild(del);
+      row.appendChild(actions);
+	      return row;
+	    }
+
+	    function collectOneRow(row) {
+	      function value(name) {
+	        var node = row.querySelector('[data-field="' + name + '"]');
+	        return node ? node.value.trim() : '';
+	      }
+	      var index = Number(row.dataset.index);
+	      var current = resources[index] || {};
+	      return {
+	        section: value('section') || '기타',
+	        title: value('title'),
+		        status: value('status'),
+		        description: value('description'),
+		        url: value('url'),
+		        copy_text: value('copy_text'),
+		        visible: current.visible !== false,
+		        template_id: current.template_id || ''
+		      };
+		    }
+
+		    function collectEditorRows(keepBlank) {
+	      return resources.filter(function(item){ return item.title || keepBlank; });
+		    }
+
+		    function syncEditorRows() {
+	      document.querySelectorAll('.edit-row').forEach(function(row){
+	        var index = Number(row.dataset.index);
+	        if (!Number.isNaN(index) && resources[index]) resources[index] = collectOneRow(row);
+	      });
+		    }
+
+		    function collectEditor() {
+	      syncEditorRows();
+		      return collectEditorRows(false);
+		    }
+
+	    function addEditRow() {
+	      resources.push({section:'기타', title:'', status:'ready', description:'', url:'', copy_text:'', visible:true});
+      renderEditor();
+      var rows = document.querySelectorAll('.edit-row');
+      var last = rows[rows.length - 1];
+      if (last) {
+        last.scrollIntoView({behavior:'smooth', block:'center'});
+        var firstInput = last.querySelector('input');
+        if (firstInput) firstInput.focus();
+      }
+    }
+
+    function saveResources() {
+      var next = collectEditor();
+      if (!next.length) {
+        toast('저장할 자료가 없습니다. 제목이 들어간 자료가 한 개 이상 필요합니다.');
+        return;
+      }
+	      fetch(apiUrl('/api/education'), {
+	        method: 'PUT',
+	        credentials: 'same-origin',
+	        headers: adminHeaders({'Content-Type': 'application/json'}),
+	        body: JSON.stringify({resources: next})
+      }).then(function(res){
+        if (!res.ok) throw {status: res.status};
+        return res.json();
+      }).then(function(data){
+        resources = normalize(data.resources);
+        editing = false;
+        render();
+        toast('교육 자료를 저장했습니다.');
+      }).catch(function(err){
+        var status = err && err.status;
+        if (status === 401 || status === 403) {
+          sessionStorage.removeItem('memberAdminKey');
+          adminKeyPrompted = false;
+        }
+        var msg;
+        if (status === 401 || status === 403) {
+          msg = '저장 실패 (' + status + '): 편집 API 인증이 필요합니다. 공개 페이지는 정상이며, 대시보드 로그인 후 다시 시도해 주세요.';
+        } else if (status === 404) {
+          msg = '저장 실패 (404): API 경로를 찾을 수 없습니다. 공개 페이지는 정상이며, 서버 설정을 확인해 주세요.';
+        } else if (status === 503 || status === 530) {
+          msg = '저장 실패 (' + status + '): 서버 일시 오류입니다. 공개 페이지는 정상이며, 잠시 후 다시 시도해 주세요.';
+        } else if (typeof navigator !== 'undefined' && !navigator.onLine) {
+          msg = '저장 실패: 네트워크 연결이 끊겨 있습니다.';
+        } else {
+          msg = '저장 실패: 대시보드 인증 또는 서버 상태를 확인해 주세요.';
+        }
+        toast(msg, 5000);
+      });
+    }
+
+    function toggleEdit(force) {
+      if (!operatorMode) return;
+      editing = typeof force === 'boolean' ? force : !editing;
+      render();
+    }
+
+    function scrollToResources() {
+      var node = document.getElementById('resourceRoot');
+      if (node) node.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+
+    function openLink(url) {
+      if (!url) return;
+      var win = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!win) {
+        copyText(url);
+        toast('새 탭이 차단되어 주소를 복사했습니다.');
+      }
+    }
+
+    function copyText(text) {
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function(){
+          toast('복사했습니다.');
+        }).catch(function(){
+          fallbackCopy(text);
+        });
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        toast('복사했습니다.');
+      } catch (err) {
+        toast('복사하지 못했습니다. 직접 길게 눌러 복사해 주세요.');
+      }
+    }
+
+    function copyPageLink() {
+      copyText(location.origin + location.pathname);
+    }
+
+    reloadResources();
+  </script>
 </body>
 </html>
