@@ -49,8 +49,11 @@
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
-    button, input, textarea { font: inherit; color: var(--text); }
+    button, input, textarea, select { font: inherit; color: var(--text); }
     button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       border: 1px solid var(--line);
       background: var(--panel-2);
       min-height: 38px;
@@ -59,6 +62,8 @@
       cursor: pointer;
       font-weight: 600;
       letter-spacing: -.01em;
+      line-height: 1.2;
+      white-space: nowrap;
       transition: background .12s ease, border-color .12s ease, color .12s ease;
     }
     button:hover { background: var(--panel-3); border-color: var(--line); }
@@ -128,8 +133,6 @@
       justify-content: flex-end;
 	    }
 	    #editToggle { display: none; }
-	    #openPublicPage { display: none; }
-	    body.operator-mode #openPublicPage { display: inline-flex; }
 	    body.operator-mode #editToggle { display: inline-flex; }
 
     /* ===== Hero ===== */
@@ -486,6 +489,76 @@
       font-weight: 700;
       letter-spacing: .04em;
     }
+    .edit-auth {
+      display: grid;
+      grid-template-columns: minmax(190px, 260px) auto minmax(180px, 1fr);
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 10px;
+      border: 1px solid var(--line-soft);
+      border-radius: 9px;
+      background: rgba(255,255,255,.025);
+    }
+    .auth-status {
+      min-width: 0;
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+    .section-tabs {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin: 14px 0 4px;
+    }
+    .section-tab {
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 0 12px;
+      color: var(--soft);
+      background: transparent;
+    }
+    .section-tab.active {
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+      color: var(--text);
+    }
+    .edit-section {
+      border: 1px solid var(--line-soft);
+      border-radius: 10px;
+      margin-top: 12px;
+      background: rgba(255,255,255,.018);
+      overflow: hidden;
+    }
+    .edit-section-head {
+      width: 100%;
+      min-height: 46px;
+      border: 0;
+      border-radius: 0;
+      background: var(--panel-2);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 14px;
+      text-align: left;
+    }
+    .edit-section-title {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+    .edit-section-meta {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .edit-section-body {
+      padding: 0 12px 12px;
+    }
 	    .edit-row {
 	      border: 1px solid var(--line-soft);
 	      border-radius: 9px;
@@ -552,6 +625,10 @@
       padding: 9px 11px;
       outline: none;
       font-size: 14px;
+    }
+    select option {
+      background: var(--bg-soft);
+      color: var(--text);
     }
 	    textarea {
       margin-top: 8px;
@@ -631,6 +708,7 @@
       h1 { font-size: clamp(24px, 6.4vw, 32px); }
       .section { padding: 18px; }
       .section-head { flex-direction: column; align-items: flex-start; }
+      .edit-auth { grid-template-columns: 1fr; }
       .grid, .edit-grid { grid-template-columns: 1fr; }
       .card { min-height: 0; }
       .actions button { flex: 1 1 100%; }
@@ -651,11 +729,10 @@
           <div class="brand-sub">수업 대시보드 · 일요일 진행</div>
         </div>
       </div>
-	      <nav class="toolbar" aria-label="페이지 도구">
-		        <button type="button" id="openPublicPage" class="btn-ghost" onclick="openLink(EDUCATION_PUBLIC_URL)" aria-label="온라인 수업 대시보드 열기">공개 페이지 열기</button>
-		        <button type="button" class="btn-ghost" onclick="copyPageLink()" aria-label="이 페이지 주소 복사">이 페이지 주소 복사</button>
-	        <button type="button" class="btn-ghost" onclick="reloadResources()" aria-label="자료 새로고침">새로고침</button>
-	        <button type="button" id="editToggle" onclick="toggleEdit()" aria-label="운영자 편집 모드 전환">운영자 편집</button>
+		      <nav class="toolbar" aria-label="페이지 도구">
+			        <button type="button" class="btn-ghost" onclick="copyPageLink()" aria-label="수업 대시보드 공개 주소 복사">공개 주소 복사</button>
+	        <button type="button" class="btn-ghost" onclick="reloadResources()" aria-label="자료 새로고침">자료 새로고침</button>
+	        <button type="button" id="editToggle" onclick="toggleEdit()" aria-label="자료 편집과 수강생 미리보기 전환">자료 편집</button>
       </nav>
     </header>
 
@@ -719,8 +796,13 @@
 	      <section class="edit-shell" aria-label="교육 자료 편집">
 		        <div class="edit-banner" role="note">
 		          이 영역은 운영자만 보입니다. 숨긴 자료는 보관되지만 수강생 공개 페이지에는 표시되지 않습니다.
-		          <strong>변경 저장 후 수강생 화면은 새로고침 시 반영됩니다.</strong>
+		          <strong>공개 화면과 수강생 화면은 같은 페이지입니다.</strong>
 		        </div>
+        <div class="edit-auth">
+          <input id="adminKeyInput" type="password" autocomplete="current-password" placeholder="관리자 비밀번호" aria-label="관리자 비밀번호">
+          <button type="button" onclick="saveAdminKey()">비밀번호 적용</button>
+          <span id="authStatus" class="auth-status">비밀번호를 적용하면 숨김 템플릿까지 불러옵니다.</span>
+        </div>
         <div class="section-head">
 	          <div class="section-title-wrap">
 	            <div class="section-title">자료 편집</div>
@@ -733,11 +815,12 @@
 		              <option value="hidden">숨김만</option>
 		            </select>
 		            <button type="button" onclick="addEditRow()">자료 추가</button>
-			            <button type="button" onclick="copyText(EDUCATION_PUBLIC_URL)">학생 공개 페이지 주소 복사</button>
+			            <button type="button" onclick="copyText(EDUCATION_PUBLIC_URL)">공개 주소 복사</button>
 	            <button type="button" class="btn-primary" onclick="saveResources()">변경 저장</button>
-	            <button type="button" class="btn-ghost" onclick="toggleEdit(false)">편집 닫기</button>
+	            <button type="button" class="btn-ghost" onclick="toggleEdit(false)">수강생 미리보기</button>
           </div>
         </div>
+        <div id="sectionTabs" class="section-tabs" aria-label="자료 폴더"></div>
         <div id="editRoot"></div>
       </section>
 
@@ -756,10 +839,12 @@
 	      ? 'https://apply.arsen-ai.com'
 	      : '';
 	    var resources = [];
-	    var operatorMode = new URLSearchParams(location.search).has('edit') || location.hash.indexOf('edit') >= 0;
-	    var editing = operatorMode;
-	    var editorFilter = 'all';
-	    var adminKeyPrompted = false;
+		    var operatorMode = new URLSearchParams(location.search).has('edit') || location.hash.indexOf('edit') >= 0;
+		    var editing = operatorMode;
+		    var editorFilter = 'all';
+		    var editorSectionFilter = 'all';
+		    var collapsedSections = {};
+		    var lastSavedAt = '';
 	    var SECTION_HINTS = {
 	      '설치 링크': '공식 다운로드 페이지에서 직접 설치합니다. 가짜 사이트 주의.',
 	      '터미널 복붙': 'Mac 터미널을 켜고 복사 버튼으로 명령을 그대로 붙여 넣습니다.',
@@ -818,47 +903,83 @@
 	      });
 	    }
 
-	    function getAdminKey() {
-	      return sessionStorage.getItem('memberAdminKey') || localStorage.getItem('memberAdminKey') || '';
-	    }
+		    function adminKeyInput() {
+		      return document.getElementById('adminKeyInput');
+		    }
 
-	    function ensureAdminKey() {
-	      var key = getAdminKey();
-	      if (!key && operatorMode && !adminKeyPrompted) {
-	        adminKeyPrompted = true;
-	        key = window.prompt('수업 자료 편집을 위해 관리자 비밀번호를 입력해 주세요.') || '';
-	        key = key.trim();
-	        if (key) sessionStorage.setItem('memberAdminKey', key);
-	      }
-	      return key;
-	    }
+		    function getAdminKey() {
+		      var input = adminKeyInput();
+		      var inlineKey = input ? input.value.trim() : '';
+		      return inlineKey || sessionStorage.getItem('memberAdminKey') || localStorage.getItem('memberAdminKey') || '';
+		    }
 
-	    function adminHeaders(extra) {
-	      var headers = Object.assign({}, extra || {});
-	      var key = operatorMode ? ensureAdminKey() : getAdminKey();
-	      if (key) headers['X-Admin-Key'] = key;
-	      return headers;
-	    }
+		    function updateAuthStatus(message) {
+		      var status = document.getElementById('authStatus');
+		      if (!status) return;
+		      if (message) {
+		        status.textContent = message;
+		        return;
+		      }
+		      status.textContent = getAdminKey()
+		        ? '비밀번호 적용됨. 숨김 템플릿까지 불러올 수 있습니다.'
+		        : '비밀번호를 적용하면 숨김 템플릿까지 불러옵니다.';
+		    }
+
+		    function ensureAdminKey() {
+		      var key = getAdminKey();
+		      if (key) {
+		        sessionStorage.setItem('memberAdminKey', key);
+		        updateAuthStatus();
+		        return key;
+		      }
+		      updateAuthStatus('저장하려면 관리자 비밀번호를 먼저 입력해 주세요.');
+		      toast('관리자 비밀번호를 먼저 입력해 주세요.', 3500);
+		      var input = adminKeyInput();
+		      if (input) input.focus();
+		      return '';
+		    }
+
+		    function saveAdminKey() {
+		      var key = getAdminKey();
+		      if (!key) {
+		        updateAuthStatus('입력된 비밀번호가 없습니다.');
+		        toast('관리자 비밀번호를 입력해 주세요.', 3000);
+		        return;
+		      }
+		      sessionStorage.setItem('memberAdminKey', key);
+		      updateAuthStatus('비밀번호 적용 중입니다. 숨김 자료를 다시 불러옵니다.');
+		      reloadResources();
+		    }
+
+		    function adminHeaders(extra) {
+		      var headers = Object.assign({}, extra || {});
+		      var key = getAdminKey();
+		      if (key) headers['X-Admin-Key'] = key;
+		      return headers;
+		    }
 
 	    function apiUrl(path) {
 	      return EDUCATION_API_BASE + path;
 	    }
 
-	    function reloadResources() {
-	      var url = operatorMode ? '/api/education?include_hidden=1' : '/api/education';
-	      fetch(apiUrl(url), {credentials: 'same-origin', headers: operatorMode ? adminHeaders() : {}})
-        .then(function(res){ if (!res.ok) throw {status: res.status}; return res.json(); })
-        .then(function(data){
-          resources = normalize(data.resources);
-          render();
-        })
-        .catch(function(err){
-          if (err && (err.status === 401 || err.status === 403)) {
-            sessionStorage.removeItem('memberAdminKey');
-            adminKeyPrompted = false;
-          }
-          resources = fallbackResources.slice();
-          render();
+		    function reloadResources() {
+		      syncEditorRows();
+		      var hasAdminKey = operatorMode && !!getAdminKey();
+		      var url = hasAdminKey ? '/api/education?include_hidden=1' : '/api/education';
+		      fetch(apiUrl(url), {credentials: 'same-origin', headers: hasAdminKey ? adminHeaders() : {}})
+	        .then(function(res){ if (!res.ok) throw {status: res.status}; return res.json(); })
+	        .then(function(data){
+	          resources = normalize(data.resources);
+	          updateAuthStatus(hasAdminKey ? '비밀번호 적용됨. 숨김 템플릿까지 표시합니다.' : '');
+	          render();
+	        })
+	        .catch(function(err){
+	          if (err && (err.status === 401 || err.status === 403)) {
+	            sessionStorage.removeItem('memberAdminKey');
+	            updateAuthStatus('비밀번호가 맞지 않아 공개 자료만 표시합니다.');
+	          }
+	          resources = fallbackResources.slice();
+	          render();
           var status = err && err.status;
           var msg;
           if (status === 401 || status === 403) {
@@ -876,33 +997,99 @@
         });
     }
 
-    function render() {
-      document.body.classList.toggle('operator-mode', operatorMode);
-      document.body.classList.toggle('editing', editing);
-      document.getElementById('editToggle').textContent = editing ? '수강생 화면 보기' : '운영자 편집';
-      renderStudent();
-	      renderEditor();
-	    }
+	    function render() {
+	      document.body.classList.toggle('operator-mode', operatorMode);
+	      document.body.classList.toggle('editing', editing);
+	      document.getElementById('editToggle').textContent = editing ? '수강생 미리보기' : '자료 편집';
+	      updateAuthStatus();
+	      renderStudent();
+		      renderEditor();
+		    }
 
 		    function visibleResources() {
 		      return resources.filter(function(item){ return item.visible !== false; });
 		    }
 
-	    function filteredEditorResources() {
-	      return resources.map(function(item, idx){ return {item:item, idx:idx}; }).filter(function(entry){
-	        if (editorFilter === 'visible') return entry.item.visible !== false;
-	        if (editorFilter === 'hidden') return entry.item.visible === false;
-	        return true;
-	      });
-	    }
+		    function filteredEditorResources(ignoreSection) {
+		      return resources.map(function(item, idx){ return {item:item, idx:idx}; }).filter(function(entry){
+		        if (!ignoreSection && editorSectionFilter !== 'all' && (entry.item.section || '기타') !== editorSectionFilter) return false;
+		        if (editorFilter === 'visible') return entry.item.visible !== false;
+		        if (editorFilter === 'hidden') return entry.item.visible === false;
+		        return true;
+		      });
+		    }
 
-	    function setEditorFilter(value) {
-	      syncEditorRows();
-	      editorFilter = value || 'all';
-	      renderEditor();
-	    }
+		    function setEditorFilter(value) {
+		      syncEditorRows();
+		      editorFilter = value || 'all';
+		      renderEditor();
+		    }
 
-		    function groupedResources(list) {
+		    function setEditorSectionFilter(value) {
+		      syncEditorRows();
+		      editorSectionFilter = value || 'all';
+		      renderEditor();
+		    }
+
+		    function orderedSectionNames(names) {
+		      var seen = {};
+		      names.forEach(function(name){ seen[name || '기타'] = true; });
+		      var ordered = [];
+		      SECTION_ORDER.forEach(function(name){
+		        if (seen[name]) {
+		          ordered.push(name);
+		          delete seen[name];
+		        }
+		      });
+		      Object.keys(seen).sort(function(a, b){ return a.localeCompare(b, 'ko'); }).forEach(function(name){
+		        ordered.push(name);
+		      });
+		      return ordered;
+		    }
+
+		    function editorSectionNames() {
+		      var entries = filteredEditorResources(true);
+		      return orderedSectionNames(entries.map(function(entry){ return entry.item.section || '기타'; }));
+		    }
+
+		    function renderEditorTabs() {
+		      var root = document.getElementById('sectionTabs');
+		      if (!root) return;
+		      root.innerHTML = '';
+		      var names = editorSectionNames();
+		      if (editorSectionFilter !== 'all' && names.indexOf(editorSectionFilter) < 0) {
+		        editorSectionFilter = 'all';
+		      }
+		      function addTab(label, value, count) {
+		        var btn = el('button', 'section-tab' + (editorSectionFilter === value ? ' active' : ''), label + ' ' + count);
+		        btn.type = 'button';
+		        btn.onclick = function(){ setEditorSectionFilter(value); };
+		        root.appendChild(btn);
+		      }
+		      addTab('전체', 'all', filteredEditorResources(true).length);
+		      names.forEach(function(name){
+		        var count = filteredEditorResources(true).filter(function(entry){ return (entry.item.section || '기타') === name; }).length;
+		        addTab(name, name, count);
+		      });
+		    }
+
+		    function groupedEditorEntries(entries) {
+		      var groups = {};
+		      entries.forEach(function(entry){
+		        var key = entry.item.section || '기타';
+		        if (!groups[key]) groups[key] = [];
+		        groups[key].push(entry);
+		      });
+		      return {groups: groups, names: orderedSectionNames(Object.keys(groups))};
+		    }
+
+		    function toggleSection(sectionName) {
+		      syncEditorRows();
+		      collapsedSections[sectionName] = !collapsedSections[sectionName];
+		      renderEditor();
+		    }
+
+			    function groupedResources(list) {
 	      var groups = {};
 	      list.forEach(function(item){
         var key = item.section || '기타';
@@ -910,10 +1097,9 @@
         groups[key].push(item);
       });
       var ordered = {};
-      SECTION_ORDER.forEach(function(name){
-        if (groups[name]) { ordered[name] = groups[name]; delete groups[name]; }
+      orderedSectionNames(Object.keys(groups)).forEach(function(name){
+        ordered[name] = groups[name];
       });
-      Object.keys(groups).forEach(function(name){ ordered[name] = groups[name]; });
       return ordered;
     }
 
@@ -987,21 +1173,46 @@
       return card;
     }
 
-		    function renderEditor() {
-		      var root = document.getElementById('editRoot');
-		      root.innerHTML = '';
-		      var summary = document.getElementById('editSummary');
-		      var visibleCount = visibleResources().length;
-	      var filtered = filteredEditorResources();
-	      var filterLabel = editorFilter === 'hidden' ? '숨김만' : editorFilter === 'visible' ? '공개만' : '전체';
-		      if (summary) summary.textContent = '공개 ' + visibleCount + '개 · 숨김 ' + (resources.length - visibleCount) + '개 · 현재 ' + filterLabel + ' ' + filtered.length + '개 표시 중입니다.';
-	      var filterNode = document.getElementById('editFilter');
-	      if (filterNode) filterNode.value = editorFilter;
-	      filtered.forEach(function(entry){
-		        root.appendChild(editRow(entry.item, entry.idx));
+			    function renderEditor() {
+			      var root = document.getElementById('editRoot');
+			      root.innerHTML = '';
+		      renderEditorTabs();
+			      var summary = document.getElementById('editSummary');
+			      var visibleCount = visibleResources().length;
+		      var filtered = filteredEditorResources();
+		      var filterLabel = editorFilter === 'hidden' ? '숨김만' : editorFilter === 'visible' ? '공개만' : '전체';
+		      var sectionLabel = editorSectionFilter === 'all' ? '전체 폴더' : editorSectionFilter;
+		      var savedLabel = lastSavedAt ? ' · 최근 저장 ' + lastSavedAt : '';
+			      if (summary) summary.textContent = '공개 ' + visibleCount + '개 · 숨김 ' + (resources.length - visibleCount) + '개 · ' + sectionLabel + ' / ' + filterLabel + ' ' + filtered.length + '개 표시 중입니다.' + savedLabel;
+		      var filterNode = document.getElementById('editFilter');
+		      if (filterNode) filterNode.value = editorFilter;
+		      if (!filtered.length) {
+		        root.appendChild(el('div', 'empty', '현재 필터에 표시할 자료가 없습니다.'));
+		        return;
+		      }
+		      var grouped = groupedEditorEntries(filtered);
+		      grouped.names.forEach(function(sectionName){
+		        var entries = grouped.groups[sectionName] || [];
+		        var publicCount = entries.filter(function(entry){ return entry.item.visible !== false; }).length;
+		        var hiddenCount = entries.length - publicCount;
+		        var isCollapsed = collapsedSections[sectionName] === true;
+		        var section = el('section', 'edit-section');
+		        var head = el('button', 'edit-section-head');
+		        head.type = 'button';
+		        head.onclick = function(){ toggleSection(sectionName); };
+		        head.appendChild(el('span', 'edit-section-title', sectionName));
+		        head.appendChild(el('span', 'edit-section-meta', entries.length + '개 · 공개 ' + publicCount + ' · 숨김 ' + hiddenCount + ' · ' + (isCollapsed ? '열기' : '접기')));
+		        section.appendChild(head);
+		        if (!isCollapsed) {
+		          var body = el('div', 'edit-section-body');
+		          entries.forEach(function(entry){
+		            body.appendChild(editRow(entry.item, entry.idx));
+		          });
+		          section.appendChild(body);
+		        }
+		        root.appendChild(section);
 		      });
-	      if (!filtered.length) root.appendChild(el('div', 'empty', '현재 필터에 표시할 자료가 없습니다.'));
-		    }
+			    }
 
 	    function editRow(item, idx) {
 	      var row = el('div', 'edit-row');
@@ -1129,6 +1340,9 @@
 
 	    function addEditRow() {
 	      resources.push({section:'기타', title:'', status:'ready', description:'', url:'', copy_text:'', visible:true});
+	      editorFilter = 'all';
+	      editorSectionFilter = 'all';
+	      collapsedSections['기타'] = false;
       renderEditor();
       var rows = document.querySelectorAll('.edit-row');
       var last = rows[rows.length - 1];
@@ -1145,6 +1359,7 @@
         toast('저장할 자료가 없습니다. 제목이 들어간 자료가 한 개 이상 필요합니다.');
         return;
       }
+      if (!ensureAdminKey()) return;
 	      fetch(apiUrl('/api/education'), {
 	        method: 'PUT',
 	        credentials: 'same-origin',
@@ -1155,14 +1370,15 @@
         return res.json();
       }).then(function(data){
         resources = normalize(data.resources);
-        editing = false;
+        editing = operatorMode;
+        lastSavedAt = new Date().toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit'});
         render();
-        toast('교육 자료를 저장했습니다.');
+        toast('교육 자료를 저장했습니다. 공개 화면 새로고침 시 반영됩니다.');
       }).catch(function(err){
         var status = err && err.status;
         if (status === 401 || status === 403) {
           sessionStorage.removeItem('memberAdminKey');
-          adminKeyPrompted = false;
+          updateAuthStatus('비밀번호가 맞지 않습니다. 다시 입력해 주세요.');
         }
         var msg;
         if (status === 401 || status === 403) {
@@ -1230,7 +1446,7 @@
     }
 
     function copyPageLink() {
-      copyText(location.origin + location.pathname);
+      copyText(EDUCATION_PUBLIC_URL);
     }
 
     reloadResources();
